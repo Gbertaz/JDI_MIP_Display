@@ -25,12 +25,45 @@
 
 #include <Arduino.h>
 #include <SPI.h>
+#include <Adafruit_GFX.h>
+#include <Display_cfg.h>
 
-class:JDI_MIP_Display{
+#define COLOR_BLACK             0x00
+#define COLOR_BLUE              0x02
+#define COLOR_GREEN             0x04
+#define COLOR_CYAN              0x06
+#define COLOR_RED               0x08
+#define COLOR_MAGENTA           0x0a
+#define COLOR_YELLOW            0x0c
+#define COLOR_WHITE             0x0e
 
-public:
+#define CMD_NO_UPDATE           0x00
+#define CMD_BLINKING_BLACK      0x10
+#define CMD_BLINKING_INVERSION  0x14
+#define CMD_BLINKING_WHITE      0x18
+#define CMD_ALL_CLEAR           0x20
+#define CMD_VCOM                0x40
+#define CMD_UPDATE              0x90
 
-private:
+class JDI_MIP_Display : public Adafruit_GFX{
+    public:
+        JDI_MIP_Display();
+        void begin();
+        void refresh();
+        void displayOn();
+        void displayOff();
+        void frontlightOn();
+        void frontlightOff();
+        void setBackgroundColor(uint16_t color);
 
+    private:
+        uint8_t _scs;       //Chip Select Signal
+        uint8_t _disp;      //Display ON/OFF Switching Signal
+        uint8_t _frontlight;
+        uint16_t _background;
+        char _cmdBuffer[DISPLAY_WIDTH / 2];
+        char _dispBuffer[(DISPLAY_WIDTH / 2) * DISPLAY_HEIGHT];
+        void sendLineCommand(char* line_cmd, int line);
+        void drawPixel(int16_t x, int16_t y, uint16_t color);
 };
 #endif
