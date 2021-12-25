@@ -85,9 +85,9 @@ void setup() {
   jdi_display.begin();
   delay(50);
   jdi_display.displayOn();
-  jdi_display.frontlightOn();
+  jdi_display.frontlightOn();         //Optional depending on the display model
   jdi_display.fillScreen(COLOR_WHITE);
-  jdi_display.refresh();
+  jdi_display.refresh();              //Actually updates the display
   startMillis = millis();
 }
 
@@ -108,7 +108,7 @@ void loop() {
   jdi_display.setTextSize(8);
   jdi_display.setCursor(xPos + 5, yPos + 30);
   jdi_display.print(fps);
-  jdi_display.refresh();
+  jdi_display.refresh();      //Actually updates the display
   
   fps = frames / ((millis() - startMillis) / 1000);
   frames++;

@@ -20,8 +20,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#define PIN_SCS         10          // Chip Select Signal pin
+#define PIN_SCS         10          // SPI Chip Select Signal pin
 #define PIN_DISP        22          // Display ON/OFF Switching Signal pin
-#define PIN_FRONTLIGHT  23          // Frontlight pin
+#define PIN_FRONTLIGHT  23          // Frontlight pin. Optional depending on the display model
 #define DISPLAY_WIDTH   400         // Display width in pixel
 #define DISPLAY_HEIGHT  240         // Display height in pixel
