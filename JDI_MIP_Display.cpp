@@ -35,7 +35,7 @@ void JDI_MIP_Display::begin(){
     pinMode(_disp, OUTPUT);
     pinMode(_frontlight, OUTPUT);
     memset(&_cmdBuffer[0], 0, sizeof(_cmdBuffer));
-    memset(&_cmdBuffer[0], (char)((_background & 0x0F) | ((_background & 0x0F) << 4)), sizeof(_dispBuffer));
+    memset(&_dispBuffer[0], (char)((_background & 0x0F) | ((_background & 0x0F) << 4)), sizeof(_dispBuffer));
     SPI.begin();
 }
 
@@ -43,7 +43,7 @@ void JDI_MIP_Display::refresh()
 {
     for(int i=0; i < height(); i++){
         memset(&_cmdBuffer[0], (char)((_background & 0x0F) | ((_background & 0x0F) << 4)), sizeof(_cmdBuffer));
-        memcpy(&_cmdBuffer[0], &_dispBuffer[(width()/2) * i], width()/2);
+        memcpy(&_cmdBuffer[0], &_dispBuffer[(width() / 2) * i], width() / 2);
         sendLineCommand(&_cmdBuffer[0], i);
     }
 }
@@ -57,7 +57,7 @@ void JDI_MIP_Display::sendLineCommand(char* line_cmd, int line){
     SPI.transfer(CMD_UPDATE);
     SPI.transfer(line + 1);
 
-    for(int i = 0; i < (width()/2); i++){
+    for(int i = 0; i < (width() / 2); i++){
         SPI.transfer(line_cmd[i]);
     }
 
@@ -73,12 +73,12 @@ void JDI_MIP_Display::drawPixel(int16_t x, int16_t y, uint16_t color)
     }
 
     if(x % 2 == 0){
-        _dispBuffer[((width()/2)*y) + (x/2)] &= 0x0F;
-        _dispBuffer[((width()/2)*y) + (x/2)] |= (color & 0x0F) << 4;
+        _dispBuffer[((width() / 2) * y) + (x / 2)] &= 0x0F;
+        _dispBuffer[((width() / 2) * y) + (x / 2)] |= (color & 0x0F) << 4;
     }
     else{
-        _dispBuffer[((width()/2)*y) + (x/2)] &= 0xF0;
-        _dispBuffer[((width()/2)*y) + (x/2)] |= color & 0x0F;
+        _dispBuffer[((width() / 2) * y) + (x / 2)] &= 0xF0;
+        _dispBuffer[((width() / 2) * y) + (x / 2)] |= color & 0x0F;
     }
 }
 
