@@ -1,7 +1,9 @@
 # Japan Display Inc. library for Arduino
 Arduino library to drive the Memory In Pixel Displays produced by Japan Display Inc.  
 
-The library has been tested only with the display model **LPM027M128B** but it should work with all the JDI MIP Displays with the SPI interface such as **LPM044M141A**, **LPM013M126A** and so on. If you own one of these displays feel free to test the library and send PRs.
+The library has been tested only with the display model **LPM027M128B** but it should work with all the JDI MIP Displays with the SPI interface such as **LPM044M141A**, **LPM013M126A** and so on. If you own one of these displays feel free to test the library and send PRs.  
+
+Based on [Tadayuki Okamoto's library](https://os.mbed.com/users/KURETA90/code/ColorMemLCD/).
 
 # Prerequisites
 
@@ -62,3 +64,6 @@ Keep in mind that all the drawing functions like *fillCircle*, *drawCircle*, *fi
 ```
 jdi_display.refresh();
 ```
+***
+
+Please check the [Examples](https://github.com/Gbertaz/JDI_MIP_Display/tree/master/examples)
