@@ -35,17 +35,32 @@ void JDI_MIP_Display::begin(){
     pinMode(_disp, OUTPUT);
     pinMode(_frontlight, OUTPUT);
     memset(&_cmdBuffer[0], 0, sizeof(_cmdBuffer));
+    memset(&_backBuffer[0], (char)((_background & 0x0F) | ((_background & 0x0F) << 4)), sizeof(_dispBuffer));
     memset(&_dispBuffer[0], (char)((_background & 0x0F) | ((_background & 0x0F) << 4)), sizeof(_dispBuffer));
     SPI.begin();
 }
 
 void JDI_MIP_Display::refresh()
 {
+    int halfWidth = width() / 2;
     for(int i=0; i < height(); i++){
+        int lineIdx = halfWidth * i;
+        #ifdef DIFF_LINE_UPDATE
+            if(compareBuffersLine(lineIdx) == true) continue;
+        #endif
         memset(&_cmdBuffer[0], (char)((_background & 0x0F) | ((_background & 0x0F) << 4)), sizeof(_cmdBuffer));
-        memcpy(&_cmdBuffer[0], &_dispBuffer[(width() / 2) * i], width() / 2);
+        memcpy(&_dispBuffer[lineIdx], &_backBuffer[lineIdx], halfWidth);
+        memcpy(&_cmdBuffer[0], &_dispBuffer[lineIdx], halfWidth);
         sendLineCommand(&_cmdBuffer[0], i);
     }
+}
+
+bool JDI_MIP_Display::compareBuffersLine(int lineIndex){
+    for(int i = 0; i < (width() / 2); i++){
+        int pixelIdx = lineIndex + i;
+        if(_backBuffer[pixelIdx] != _dispBuffer[pixelIdx]) return false;
+    }
+    return true;
 }
 
 void JDI_MIP_Display::sendLineCommand(char* line_cmd, int line){
@@ -73,12 +88,12 @@ void JDI_MIP_Display::drawPixel(int16_t x, int16_t y, uint16_t color)
     }
 
     if(x % 2 == 0){
-        _dispBuffer[((width() / 2) * y) + (x / 2)] &= 0x0F;
-        _dispBuffer[((width() / 2) * y) + (x / 2)] |= (color & 0x0F) << 4;
+        _backBuffer[((width() / 2) * y) + (x / 2)] &= 0x0F;
+        _backBuffer[((width() / 2) * y) + (x / 2)] |= (color & 0x0F) << 4;
     }
     else{
-        _dispBuffer[((width() / 2) * y) + (x / 2)] &= 0xF0;
-        _dispBuffer[((width() / 2) * y) + (x / 2)] |= color & 0x0F;
+        _backBuffer[((width() / 2) * y) + (x / 2)] &= 0xF0;
+        _backBuffer[((width() / 2) * y) + (x / 2)] |= color & 0x0F;
     }
 }
 
