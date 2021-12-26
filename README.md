@@ -13,6 +13,8 @@ There is also a different kind of display lighting produced by Azumo: they apply
 
 Based on [Tadayuki Okamoto's library](https://os.mbed.com/users/KURETA90/code/ColorMemLCD/).
 
+***
+
 # Breakout board
 
 Both the Sharp and JDI Displays are ultra slim and compact. They have a 10 pins FPC connector which can be difficult to handle. Some of them have an extra 2 pin connector for the back/front light panel. I have designed a [Breakout board](https://github.com/Gbertaz/JDI_MIP_Display/blob/master/images/breakout_v1.0.png) to make it easy to test the display and turn on/off the light.  
@@ -30,6 +32,21 @@ This breakout has the following issues:
 
 ![BreakoutImage](https://github.com/Gbertaz/JDI_MIP_Display/blob/master/images/breakout_v1.0_display.jpg)
 
+
+# Wiring
+
+
+| PIN | Description  | Connect to | Example for Teensy 4.1 |
+| ------------- | ------------- | ------------- | ------------- |
+| SCLK | SPI Serial Clock Signal | Connect to MCU SPI Clock | Teensy 4.1 pin 13 |
+| SI/MOSI | SPI Serial Data Input Signal also known as MOSI (Master Out Slave In) | Connect to MCU SPI MOSI | Teensy 4.1 pin 11 |
+| SCS | SPI Chip Select Signal | Connect to MCU SPI Chip select pin | Teensy 4.1 pin 10 |
+| EXTCOMIN | COM Inversion Signal Input | Not connected | Not connected |
+| DISP | Display ON/OFF Switching Signal | Connect to any digital pin | Teensy 4.1 pin 22 |
+| EXTMODE | COM Inversion Mode Select Terminal | Not connected | Not connected |
+| FRONTLIGHT | Frontlight ON/OFF Switching Signal | Connect to any digital pin | Teensy 4.1 pin 23 |
+
+***
 
 # Prerequisites
 
