@@ -64,3 +64,6 @@ Keep in mind that all the drawing functions like *fillCircle*, *drawCircle*, *fi
 ```
 jdi_display.refresh();
 ```
+***
+
+Please check the [Examples](https://github.com/Gbertaz/JDI_MIP_Display/tree/master/examples)
