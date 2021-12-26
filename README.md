@@ -32,6 +32,7 @@ This breakout has the following issues:
 
 ![BreakoutImage](https://github.com/Gbertaz/JDI_MIP_Display/blob/master/images/breakout_v1.0_display.jpg)
 
+Here is a short [Demonstration video](https://twitter.com/NotTheWorstDev/status/1467655365672292356?s=20) of the display in action.
 
 # Wiring
 
