@@ -9,7 +9,7 @@ Check out all the [JDI Display models](https://www.j-display.com/english/product
 
 These displays are readable under direct sunlight because are reflective. They also require less power because in bright environments they don't need a backlight! However if you want to use them in the dark as well you would need a display with a backlight panel (like the model **LPM027M128C** or **LPM013M126C**).  
 
-There is also a different kind of display lighting produced by Azumo: they apply a special thin and transparent film to the front. Check out all the [Azumo displays](https://www.azumotech.com/products/). Some of them are based on Sharp displays, others on JDI display. [This](https://www.azumotech.com/products/2-7-color-display-12380-06/) is the exact display which I bought and used to test the library.
+There is also a different kind of display lighting produced by Azumo: they apply a special thin and transparent film to the front. Check out all the [Azumo displays](https://www.azumotech.com/products/). Some of them are based on Sharp display, others on JDI display. [This](https://www.azumotech.com/products/2-7-color-display-12380-06/) is the exact display which I bought and used to test the library.
 
 Based on [Tadayuki Okamoto's library](https://os.mbed.com/users/KURETA90/code/ColorMemLCD/).
 
@@ -25,7 +25,7 @@ Please note that the Breakout board version 1.0 is specifically designed for the
 
 This breakout has the following issues:
 
-1) R3 in the schematic is 839 Ohm but it is too big therefore the light is weak. I have replaced it by soldering a smalled resistor (27 Ohm).
+1) R3 in the schematic is 839 Ohm but it is too big therefore the light is weak. I have replaced it by soldering a smaller resistor (27 Ohm).
 2) The display is powered from 3.3v which is also used to power the frontlight. However there should be a different 5v source to power the frontlight.
 3) Capacitors C1 and C2 according to the display datasheet should be 0.1uF. They were out of stock when I ordered the board, I then used 100nF instead which should not be a problem but keep that in mind.
 
