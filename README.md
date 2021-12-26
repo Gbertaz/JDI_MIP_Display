@@ -19,11 +19,16 @@ Both the Sharp and JDI Displays are ultra slim and compact. They have a 10 pins 
 
 If you want to make the same test board please check the [Schematic, BOM and Gerber](https://github.com/Gbertaz/JDI_MIP_Display/tree/master/breakout/v1.0) files.
 
-Please note that the Breakout board version 1.0 is specifically designed for the JDI MIP Display model **LPM027M128B** so the position of the FPC connectors might change according to the display model. It also has a couple of issues:
+Please note that the Breakout board version 1.0 is specifically designed for the JDI MIP Display model **LPM027M128B** so the position of the FPC connectors might change according to the display model.  
 
-1) R3 is too big therefore the light is weak. I have replaced it by soldering a smalled resistor. 
+This breakout has the following issues:
+
+1) R3 in the schematic is 839 Ohm but it is too big therefore the light is weak. I have replaced it by soldering a smalled resistor (27 Ohm).
 2) The display is powered from 3.3v which is also used to power the frontlight. However there should be a different 5v source to power the frontlight.
-3) Capacitors C1 and C2 according to the display datasheet should be 0.1uF which was not in stock when I ordered the board. I then used 100nF instead which should be a problem but keep that in mind.
+3) Capacitors C1 and C2 according to the display datasheet should be 0.1uF. They were out of stock when I ordered the board, I then used 100nF instead which should not be a problem but keep that in mind.
+
+
+![BreakoutImage](https://github.com/Gbertaz/JDI_MIP_Display/blob/master/images/breakout_v1.0_display.jpg)
 
 
 # Prerequisites
