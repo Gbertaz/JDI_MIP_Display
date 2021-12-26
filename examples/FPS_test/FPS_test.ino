@@ -28,7 +28,7 @@
 //                10 VSSA      Analog Ground                                                            =>    ground
 //
 //              If you are using my breakout board there is an additional pin to control the frontlight =>    connect to any digital pin            =>    Teensy 4.1 pin 23
-//              More info about the breakout board:  
+//              More info about the breakout board: https://github.com/Gbertaz/JDI_MIP_Display#breakout-board
 //
 //
 //  Prerequisites:
