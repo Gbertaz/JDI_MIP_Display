@@ -7,7 +7,9 @@
 //                that change between two screen refresh.
 //                Splits the screen into small squares, for each 
 //                screen refresh fills one of them with a random
-//                color.
+//                color. Try to change the SQUARE_SIZE and compare
+//                the results between full screen update by commenting
+//                DIFF_LINE_UPDATE in JDI_MIP_Display.h
 //
 //                I have tested the sketch only with the LPM027M128B
 //                but it should work with all the JDI MIP Displays
@@ -68,7 +70,7 @@
 #include <JDI_MIP_Display.h>
 
 #define NUMBER_COLORS 6
-#define SQUARE_SIZE 40
+#define SQUARE_SIZE 20
 
 const uint16_t colors[NUMBER_COLORS] = { COLOR_BLUE, COLOR_GREEN, COLOR_CYAN, COLOR_RED, COLOR_MAGENTA, COLOR_YELLOW };
 
@@ -79,28 +81,57 @@ int rows = jdi_display.height() / SQUARE_SIZE;
 
 int fps = 0;
 unsigned int frames = 0;
-unsigned long startMillis = 0;
+unsigned long lastFpsMillis = 0;
 
 void setup() {
   jdi_display.begin();
   delay(50);
   jdi_display.displayOn();
   jdi_display.frontlightOn();         //Optional depending on the display model
+
+  printTestCase();
+  jdi_display.refresh();
+  delay(4000);
   drawChessboard();
-  jdi_display.refresh();              //Actually updates the display
-  
+  jdi_display.refresh();
   delay(2000);
-  startMillis = millis();
 }
 
 void loop() {
-
   colorRandomSquare();
   printFPS();
   jdi_display.refresh();              //Actually updates the display
-  
-  fps = frames / ((millis() - startMillis) / 1000);
   frames++;
+
+  if(millis() - lastFpsMillis < 1000) return;
+  fps = frames / ((millis() - lastFpsMillis) / 1000);
+  lastFpsMillis = millis();
+  frames = 0;
+}
+
+void printTestCase(){
+  jdi_display.fillScreen(COLOR_WHITE);
+  jdi_display.setTextColor(COLOR_BLACK);
+  jdi_display.setTextSize(3);
+  jdi_display.setCursor(30, 50);
+
+#ifdef DIFF_LINE_UPDATE
+  jdi_display.setTextColor(COLOR_GREEN);
+  jdi_display.print("Diff line update");
+#else
+  jdi_display.setTextColor(COLOR_BLACK);
+  jdi_display.print("Full screen update");
+#endif
+  jdi_display.setCursor(30, 100);
+  jdi_display.print(columns * rows);
+  jdi_display.setCursor(100, 100);
+  jdi_display.print("squares");
+  jdi_display.setCursor(240, 100);
+  jdi_display.print(SQUARE_SIZE);
+  jdi_display.setCursor(280, 100);
+  jdi_display.print("x");
+  jdi_display.setCursor(300, 100);
+  jdi_display.print(SQUARE_SIZE);
 }
 
 void drawChessboard(){
@@ -122,8 +153,8 @@ void colorRandomSquare(){
 }
 
 void printFPS(){
-  jdi_display.fillRect(0, 0, 105, 40, COLOR_WHITE);
-  jdi_display.drawRect(0, 0, 105, 40, COLOR_BLACK);
+  jdi_display.fillRect(0, 0, 120, 40, COLOR_WHITE);
+  jdi_display.drawRect(0, 0, 120, 40, COLOR_BLACK);
   jdi_display.setTextColor(COLOR_BLACK);
   jdi_display.setTextSize(3);
   jdi_display.setCursor(5, 5);
