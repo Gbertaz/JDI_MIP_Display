@@ -88,7 +88,7 @@ void setup() {
   delay(50);
   jdi_display.displayOn();
   jdi_display.frontlightOn();         //Optional depending on the display model
-
+  jdi_display.clearScreen();          //Clear the screen
   printTestCase();
   jdi_display.refresh();
   delay(4000);

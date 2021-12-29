@@ -7,6 +7,9 @@
 //                produced by Japan Display Inc. by filling the
 //                screen with some colored moving rectangles and
 //                showing the FPS.
+//                This test doesn't take advantage of the diff lines
+//                update because the entire buffer changes at every
+//                display refresh.
 //
 //                I have tested the sketch only with the LPM027M128B
 //                but it should work with all the JDI MIP Displays
@@ -86,7 +89,7 @@ void setup() {
   delay(50);
   jdi_display.displayOn();
   jdi_display.frontlightOn();         //Optional depending on the display model
-  jdi_display.fillScreen(COLOR_WHITE);
+  jdi_display.clearScreen();          //Clear the screen
   jdi_display.refresh();              //Actually updates the display
   startMillis = millis();
 }
