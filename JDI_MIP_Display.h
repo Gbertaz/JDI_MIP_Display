@@ -54,6 +54,7 @@ class JDI_MIP_Display : public Adafruit_GFX{
         void refresh();
         void displayOn();
         void displayOff();
+        void clearScreen();
         void frontlightOn();
         void frontlightOff();
         void setBackgroundColor(uint16_t color);

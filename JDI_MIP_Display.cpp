@@ -63,6 +63,13 @@ bool JDI_MIP_Display::compareBuffersLine(int lineIndex){
     return true;
 }
 
+void JDI_MIP_Display::clearScreen(){
+    digitalWrite(_scs, HIGH);
+    SPI.transfer(CMD_ALL_CLEAR);
+    SPI.transfer(0x00);
+    digitalWrite(_scs, LOW);
+}
+
 void JDI_MIP_Display::sendLineCommand(char* line_cmd, int line){
     if((line < 0) || (line >= height())){
         return;
