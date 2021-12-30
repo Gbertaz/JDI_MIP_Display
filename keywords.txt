@@ -14,6 +14,7 @@ begin			KEYWORD2
 refresh			KEYWORD2
 displayOn		KEYWORD2			
 displayOff		KEYWORD2
+clearScreen		KEYWORD2
 frontlightOn		KEYWORD2
 frontlightOff		KEYWORD2
 setBackgroundColor	KEYWORD2
