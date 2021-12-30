@@ -34,7 +34,6 @@ void JDI_MIP_Display::begin(){
     pinMode(_scs, OUTPUT);
     pinMode(_disp, OUTPUT);
     pinMode(_frontlight, OUTPUT);
-    memset(&_cmdBuffer[0], 0, sizeof(_cmdBuffer));
     memset(&_backBuffer[0], (char)((_background & 0x0F) | ((_background & 0x0F) << 4)), sizeof(_backBuffer));
 #ifdef DIFF_LINE_UPDATE
     memset(&_dispBuffer[0], (char)((_background & 0x0F) | ((_background & 0x0F) << 4)), sizeof(_dispBuffer));
@@ -47,14 +46,15 @@ void JDI_MIP_Display::refresh()
     int halfWidth = width() / 2;
     for(int i=0; i < height(); i++){
         int lineIdx = halfWidth * i;
-        if(compareBuffersLine(lineIdx) == true) continue;
+        char *line_cmd;
 #ifdef DIFF_LINE_UPDATE
-            memcpy(&_dispBuffer[lineIdx], &_backBuffer[lineIdx], halfWidth);
-            memcpy(&_cmdBuffer[0], &_dispBuffer[lineIdx], halfWidth);
+        if(compareBuffersLine(lineIdx) == true) continue;
+        memcpy(&_dispBuffer[lineIdx], &_backBuffer[lineIdx], halfWidth);
+        line_cmd = &_dispBuffer[lineIdx];
 #else
-            memcpy(&_cmdBuffer[0], &_backBuffer[lineIdx], halfWidth);
-#endif  
-        sendLineCommand(&_cmdBuffer[0], i);
+        line_cmd = &_backBuffer[lineIdx];
+#endif
+        sendLineCommand(line_cmd, i);
     }
 }
 

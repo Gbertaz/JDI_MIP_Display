@@ -64,13 +64,10 @@ class JDI_MIP_Display : public Adafruit_GFX{
         uint8_t _disp;      //Display ON/OFF Switching Signal
         uint8_t _frontlight;
         uint16_t _background;
-        char _cmdBuffer[DISPLAY_WIDTH / 2];
         char _backBuffer[(DISPLAY_WIDTH / 2) * DISPLAY_HEIGHT];
-
 #ifdef DIFF_LINE_UPDATE
         char _dispBuffer[(DISPLAY_WIDTH / 2) * DISPLAY_HEIGHT];
 #endif
-
         void sendLineCommand(char* line_cmd, int line);
         void drawPixel(int16_t x, int16_t y, uint16_t color);
         bool compareBuffersLine(int lineIndex);
