@@ -65,13 +65,17 @@ Here is a short [Demonstration video](https://twitter.com/NotTheWorstDev/status/
 
 This library depends on [Adafruit_GFX](https://github.com/adafruit/Adafruit-GFX-Library) and [Arduino SPI](https://github.com/arduino/ArduinoCore-avr/tree/master/libraries/SPI) libraries. So make sure to install those first.
 
-**The library requires ~107Kb of dynamic memory to efficiently draw only the lines that change between two screen refresh. If your microcontroller (for example Esp8266) doesn't have such memory you can disable the different lines update by commenting the following line in JDI_MIP_Display.h**
+# Memory requirements
+
+In order to maximize the number of Frame Per Second, the library allocates 2 buffers to efficiently draw only the lines that change between two screen refresh. **Depending on the display size you may not have enough memory on the microcontroller.**  
+
+For example for a 400x240 pixel display it is necessary to allocate ~107Kb of dynamic memory. If your microcontroller (for example Esp8266) doesn't have such memory you can disable the different lines update (using only one buffer) by commenting the following line in JDI_MIP_Display.h:
 
 ```
 #define DIFF_LINE_UPDATE
 ```
 
-**By commenting that line the display will be fully updated at every refresh. The performance will drammatically drop but the memory requirements will be ~62Kb.**
+**By commenting that line the display will be fully updated at every refresh.** The FPS will drammatically drop but the required memory will be ~62Kb (400x240 pixel display).
 
 # Usage
 
