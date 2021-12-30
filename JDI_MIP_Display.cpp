@@ -43,13 +43,12 @@ void JDI_MIP_Display::begin(){
 
 void JDI_MIP_Display::refresh()
 {
-    int halfWidth = width() / 2;
     for(int i=0; i < height(); i++){
-        int lineIdx = halfWidth * i;
+        int lineIdx = HALF_WIDTH * i;
         char *line_cmd;
 #ifdef DIFF_LINE_UPDATE
         if(compareBuffersLine(lineIdx) == true) continue;
-        memcpy(&_dispBuffer[lineIdx], &_backBuffer[lineIdx], halfWidth);
+        memcpy(&_dispBuffer[lineIdx], &_backBuffer[lineIdx], HALF_WIDTH);
         line_cmd = &_dispBuffer[lineIdx];
 #else
         line_cmd = &_backBuffer[lineIdx];
@@ -60,7 +59,7 @@ void JDI_MIP_Display::refresh()
 
 bool JDI_MIP_Display::compareBuffersLine(int lineIndex){
 #ifdef DIFF_LINE_UPDATE
-    for(int i = 0; i < (width() / 2); i++){
+    for(int i = 0; i < HALF_WIDTH; i++){
         int pixelIdx = lineIndex + i;
         if(_backBuffer[pixelIdx] != _dispBuffer[pixelIdx]) return false;
     }
@@ -84,7 +83,7 @@ void JDI_MIP_Display::sendLineCommand(char* line_cmd, int line){
     SPI.transfer(CMD_UPDATE);
     SPI.transfer(line + 1);
 
-    for(int i = 0; i < (width() / 2); i++){
+    for(int i = 0; i < HALF_WIDTH; i++){
         SPI.transfer(line_cmd[i]);
     }
 
