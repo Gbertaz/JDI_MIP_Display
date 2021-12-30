@@ -37,15 +37,27 @@ Here is a short [Demonstration video](https://twitter.com/NotTheWorstDev/status/
 # Wiring
 
 
-| PIN | Description  | Connect to | Example for Teensy 4.1 |
+| PIN | Description  | Connect to |
+| ------------- | ------------- | ------------- |
+| SCLK | SPI Serial Clock Signal | Connect to MCU SPI Clock |
+| SI/MOSI | SPI Serial Data Input Signal also known as MOSI (Master Out Slave In) | Connect to MCU SPI MOSI |
+| SCS | SPI Chip Select Signal | Connect to MCU SPI Chip select pin |
+| EXTCOMIN | COM Inversion Signal Input | Not connected |
+| DISP | Display ON/OFF Switching Signal | Connect to any digital pin |
+| EXTMODE | COM Inversion Mode Select Terminal | Not connected |
+| FRONTLIGHT | Frontlight ON/OFF Switching Signal | Connect to any digital pin |
+
+### Examples
+
+| PIN | Teensy 4.1 | Esp8266 | Esp32 |
 | ------------- | ------------- | ------------- | ------------- |
-| SCLK | SPI Serial Clock Signal | Connect to MCU SPI Clock | Teensy 4.1 pin 13 |
-| SI/MOSI | SPI Serial Data Input Signal also known as MOSI (Master Out Slave In) | Connect to MCU SPI MOSI | Teensy 4.1 pin 11 |
-| SCS | SPI Chip Select Signal | Connect to MCU SPI Chip select pin | Teensy 4.1 pin 10 |
-| EXTCOMIN | COM Inversion Signal Input | Not connected | Not connected |
-| DISP | Display ON/OFF Switching Signal | Connect to any digital pin | Teensy 4.1 pin 22 |
-| EXTMODE | COM Inversion Mode Select Terminal | Not connected | Not connected |
-| FRONTLIGHT | Frontlight ON/OFF Switching Signal | Connect to any digital pin | Teensy 4.1 pin 23 |
+| SCLK | 13 | D5 GPIO14 | 18 |
+| SI/MOSI | 11 | D7 GPIO13 | 23 |
+| SCS | 10 | D8 GPIO15 | 5 |
+| EXTCOMIN | Not connected | Not connected | Not connected |
+| DISP | 22 | D2 GPIO4 | 21 |
+| EXTMODE | Not connected | Not connected | Not connected |
+| FRONTLIGHT | 23 | D1 GPIO5 | 22 |
 
 ***
 
