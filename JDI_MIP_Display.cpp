@@ -36,7 +36,9 @@ void JDI_MIP_Display::begin(){
     pinMode(_frontlight, OUTPUT);
     memset(&_cmdBuffer[0], 0, sizeof(_cmdBuffer));
     memset(&_backBuffer[0], (char)((_background & 0x0F) | ((_background & 0x0F) << 4)), sizeof(_backBuffer));
+#ifdef DIFF_LINE_UPDATE
     memset(&_dispBuffer[0], (char)((_background & 0x0F) | ((_background & 0x0F) << 4)), sizeof(_dispBuffer));
+#endif
     SPI.begin();
 }
 
@@ -45,20 +47,24 @@ void JDI_MIP_Display::refresh()
     int halfWidth = width() / 2;
     for(int i=0; i < height(); i++){
         int lineIdx = halfWidth * i;
-        #ifdef DIFF_LINE_UPDATE
-            if(compareBuffersLine(lineIdx) == true) continue;
-        #endif
-        memcpy(&_dispBuffer[lineIdx], &_backBuffer[lineIdx], halfWidth);
-        memcpy(&_cmdBuffer[0], &_dispBuffer[lineIdx], halfWidth);
+        if(compareBuffersLine(lineIdx) == true) continue;
+#ifdef DIFF_LINE_UPDATE
+            memcpy(&_dispBuffer[lineIdx], &_backBuffer[lineIdx], halfWidth);
+            memcpy(&_cmdBuffer[0], &_dispBuffer[lineIdx], halfWidth);
+#else
+            memcpy(&_cmdBuffer[0], &_backBuffer[lineIdx], halfWidth);
+#endif  
         sendLineCommand(&_cmdBuffer[0], i);
     }
 }
 
 bool JDI_MIP_Display::compareBuffersLine(int lineIndex){
+#ifdef DIFF_LINE_UPDATE
     for(int i = 0; i < (width() / 2); i++){
         int pixelIdx = lineIndex + i;
         if(_backBuffer[pixelIdx] != _dispBuffer[pixelIdx]) return false;
     }
+#endif
     return true;
 }
 

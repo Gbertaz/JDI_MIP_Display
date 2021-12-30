@@ -28,7 +28,7 @@
 #include <Adafruit_GFX.h>
 #include <Display_cfg.h>
 
-#define DIFF_LINE_UPDATE
+//#define DIFF_LINE_UPDATE
 
 #define COLOR_BLACK             0x00
 #define COLOR_BLUE              0x02
@@ -66,7 +66,11 @@ class JDI_MIP_Display : public Adafruit_GFX{
         uint16_t _background;
         char _cmdBuffer[DISPLAY_WIDTH / 2];
         char _backBuffer[(DISPLAY_WIDTH / 2) * DISPLAY_HEIGHT];
+
+#ifdef DIFF_LINE_UPDATE
         char _dispBuffer[(DISPLAY_WIDTH / 2) * DISPLAY_HEIGHT];
+#endif
+
         void sendLineCommand(char* line_cmd, int line);
         void drawPixel(int16_t x, int16_t y, uint16_t color);
         bool compareBuffersLine(int lineIndex);
