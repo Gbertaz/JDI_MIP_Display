@@ -1,3 +1,5 @@
+[![arduino-library-badge](https://www.ardu-badge.com/badge/JDI_MIP_Display.svg?)](https://www.ardu-badge.com/JDI_MIP_Display)
+
 # Japan Display Inc. library for Arduino
 Arduino library to drive the Memory In Pixel Displays produced by Japan Display Inc.  
 
@@ -76,6 +78,14 @@ For example for a 400x240 pixel display it is necessary to allocate ~107Kb of dy
 ```
 
 **By commenting that line the display will be fully updated at every refresh.** The FPS will drammatically drop but the required memory will be ~62Kb (400x240 pixel display).
+
+# Installation
+
+The library is available from the Arduino Library Manager: load the Arduino IDE, then use the menu at the top to select Sketch -> Include Library -> Manage Libraries. Type **JDI_MIP_Display** in the search box.
+
+Click the following badge for a complete installation guide
+
+[![arduino-library-badge](https://www.ardu-badge.com/badge/JDI_MIP_Display.svg?)](https://www.ardu-badge.com/JDI_MIP_Display)
 
 # Usage
 
