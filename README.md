@@ -5,11 +5,9 @@ Arduino library to drive the Memory In Pixel Displays produced by Japan Display 
 
 The library should also work with the Memory In Pixel Displays produced by Sharp (such as **LS027B7DH01** or **LS044Q7DH01**) because they seem to share the same protocol. The only difference with the JDI Displays is that the latter are 8 bit colors while the Sharp ones are monochrome. 
 
-Please note that the library has been tested only with the JDI display model **LPM027M128B**. If you have a different display model feel free to test the library and send PRs.  
+Please note that the library has been tested only with the JDI display model **LPM027M128B** as well as the models listed in [Other supported displays section](#other-supported-displays). If you have a different display model feel free to test the library and send PRs.  
 
-Check out all the [JDI Display models](https://www.j-display.com/english/product/reflective.html).
-
-These displays are readable under direct sunlight because are reflective. They also require less power because in bright environments they don't need a backlight! However if you want to use them in the dark as well you would need a display with a backlight panel (like the model **LPM027M128C** or **LPM013M126C**).  
+Reflective displays are readable under direct sunlight and require less power because in bright environments they don't need a backlight! However if you also want to use them in dark environments you may need a display with a backlight panel (like the model **LPM027M128C** or **LPM013M126C**).
 
 There is also a different kind of display lighting produced by Azumo: they apply a special thin and transparent film to the front. Check out all the [Azumo displays](https://www.azumotech.com/products/). Some of them are based on Sharp display, others on JDI display. [This](https://www.azumotech.com/products/2-7-color-display-12380-06/) is the exact display which I bought and used to test the library.
 
@@ -145,3 +143,11 @@ jdi_display.refresh();
 ***
 
 Please check the [Examples](https://github.com/Gbertaz/JDI_MIP_Display/tree/master/examples)
+
+# Other supported displays
+## LPM013M126C
+Tested by [@testudor](https://github.com/testudor)
+
+Set both `DISPLAY_WIDTH` and `DISPLAY_HEIGHT` to `176` in [Display_cfg.h](https://github.com/Gbertaz/JDI_MIP_Display/blob/master/Display_cfg.h)
+
+A breakout board for this display can be found [here](https://github.com/testudor/LPM013M126C-breakout)
