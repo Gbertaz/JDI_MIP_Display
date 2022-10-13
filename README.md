@@ -5,7 +5,7 @@ Arduino library to drive the Memory In Pixel Displays produced by Japan Display 
 
 The library should also work with the Memory In Pixel Displays produced by Sharp (such as **LS027B7DH01** or **LS044Q7DH01**) because they seem to share the same protocol. The only difference with the JDI Displays is that the latter are 8 bit colors while the Sharp ones are monochrome. 
 
-Please note that the library has been tested only with the JDI display model **LPM027M128B**. If you have a different display model feel free to test the library and send PRs.  
+Please note that the library has been tested only with the JDI display model **LPM027M128B** as well as the models listed in [this section](#other-supported-displays). If you have a different display model feel free to test the library and send PRs.  
 
 Check out all the [JDI Display models](https://www.j-display.com/english/product/reflective.html).
 
@@ -145,3 +145,11 @@ jdi_display.refresh();
 ***
 
 Please check the [Examples](https://github.com/Gbertaz/JDI_MIP_Display/tree/master/examples)
+
+# Other supported displays
+## LPM013M126C
+Tested by [@testudor](https://github.com/testudor)
+
+Set both DISPLAY_WIDTH and DISPLAY_HEIGHT to 176 in Display_cfg.h
+
+A breakout board for this display can be found [here](https://github.com/testudor/LPM013M126C-breakout)
