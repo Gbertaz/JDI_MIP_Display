@@ -151,3 +151,10 @@ Tested by [@testudor](https://github.com/testudor)
 Set both `DISPLAY_WIDTH` and `DISPLAY_HEIGHT` to `176` in [Display_cfg.h](https://github.com/Gbertaz/JDI_MIP_Display/blob/master/Display_cfg.h)
 
 A breakout board for this display can be found [here](https://github.com/testudor/LPM013M126C-breakout)
+
+## LPM009M360A
+Tested by [@andelf](https://github.com/andelf)
+
+Set `DISPLAY_WIDTH` to `72` and `DISPLAY_HEIGHT` to `144` in [Display_cfg.h](https://github.com/Gbertaz/JDI_MIP_Display/blob/master/Display_cfg.h)
+
+This is a 0.850 inch display with 8 pins FPC or BM20B(0.8)-10DS-0.4V 10 pin connector.
