@@ -76,23 +76,6 @@ void JDI_MIP_Display::refresh()
     }
 }
 
-void JDI_MIP_Display::refresh2()
-{
-    for (int i = 0; i < HEIGHT; i++)
-    {
-        int lineIdx = HALF_WIDTH * i;
-        char *line_cmd;
-#ifdef DIFF_LINE_UPDATE
-        if (compareBuffersLine(lineIdx) == true) continue;
-        memcpy(&_dispBuffer[lineIdx], &_backBuffer[lineIdx], HALF_WIDTH);
-        line_cmd = &_dispBuffer[lineIdx];
-#else
-        line_cmd = &_backBuffer[lineIdx];
-#endif
-        sendLineCommand(line_cmd, i);
-        //Serial.println();
-    }
-}
 
 bool JDI_MIP_Display::compareBuffersLine(int lineIndex)
 {
@@ -167,77 +150,19 @@ void JDI_MIP_Display::drawBufferedPixel(int16_t x, int16_t y, uint16_t color)
     drawPixel(x, y, color); // 调用私有的drawPixel函数
 }
 
-/*void JDI_MIP_Display::drawPixel(int16_t x, int16_t y, uint16_t color)
+void JDI_MIP_Display::drawPixel(int16_t x, int16_t y, uint16_t color)
 {
     if(x < 0 || x >= width() || y < 0 || y >= height()){
         return;
     }
 
-    int16_t t;
-    switch (rotation)
-    {
-    case 1:
-        t = x;
-        x = WIDTH - 1 - y;
-        y = t;
-        break;
-    case 2:
-        x = WIDTH - 1 - x;
-        y = HEIGHT - 1 - y;
-        break;
-    case 3:
-        t = x;
-        x = y;
-        y = HEIGHT - 1 - t;
-        break;
-    default:
-        break;
-    }
-
-    int pixelIdx = ((WIDTH / 2) * y) + (x / 2);
+    int pixelIdx = ((width() / 2) * y) + (x / 2);
 
     if(x % 2 == 0){
         _backBuffer[pixelIdx] &= 0x0F;
         _backBuffer[pixelIdx] |= (color & 0x0F) << 4;
     }
     else{
-        _backBuffer[pixelIdx] &= 0xF0;
-        _backBuffer[pixelIdx] |= color & 0x0F;
-    }
-}*/
-
-void JDI_MIP_Display::drawPixel(int16_t x, int16_t y, uint16_t color)
-{
-    /*if (x < 0 || x >= width() || y < 0 || y >= height())
-    {
-        return;
-    }
-
-    int pixelIdx = ((width() / 2) * y) + (x / 2);
-    if ((x & 1) == 0) // 判断是否为偶数
-    {
-        _backBuffer[pixelIdx] &= 0x0F;
-        _backBuffer[pixelIdx] |= (color & 0x0F) << 4;
-    }
-    else
-    {
-        _backBuffer[pixelIdx] &= 0xF0;
-        _backBuffer[pixelIdx] |= color & 0x0F;
-    }*/
-
-    int16_t t = x;
-    x = y;
-    y = HEIGHT - 1 - t;
-
-    int pixelIdx = ((WIDTH / 2) * y) + (x / 2);
-
-    if (x % 2 == 0)
-    {
-        _backBuffer[pixelIdx] &= 0x0F;
-        _backBuffer[pixelIdx] |= (color & 0x0F) << 4;
-    }
-    else
-    {
         _backBuffer[pixelIdx] &= 0xF0;
         _backBuffer[pixelIdx] |= color & 0x0F;
     }
