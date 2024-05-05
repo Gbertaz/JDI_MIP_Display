@@ -56,6 +56,7 @@ public:
         JDI_MIP_Display();
         void begin(int sck = -1, int miso = -1, int mosi = -1, int ss = -1, int fre = -1, bool dmaEN = 0);
         void refresh();
+        void refresh2();
         void displayOn();
         void displayOff();
         void clearScreen();
@@ -63,7 +64,7 @@ public:
         void frontlightOff();
         void setBackgroundColor(uint16_t color);
         void drawBufferedPixel(int16_t x, int16_t y, uint16_t color);
-
+        void pushPixelsDMA(uint8_t *image, uint32_t len);
 private:
         uint8_t _scs;         // 芯片选择信号 Chip selection signal
         uint8_t _disp;        // 显示ON/OFF开关信号 Display ON/OFF switch signal
@@ -84,7 +85,7 @@ private:
         uint8_t spiBusyCheck = 0; // 要检查的ESP32传输缓冲区的数量 The number of ESP32 transmission buffers to be checked
         bool dmaBusy(void);       // 如果DMA仍在进行中，则返回true If DMA is still in progress, return true
         void dmaWait(void);       // 等待DMA完成 Waiting for DMA completion
-        void pushPixelsDMA(uint8_t *image, uint32_t len);
+        void _pushPixelsDMA(uint8_t *image, uint32_t len);
         bool initDMA(int sck, int miso, int mosi, int ss, int fre);
         void deInitDMA(void);
 };

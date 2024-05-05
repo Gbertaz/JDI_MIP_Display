@@ -22,11 +22,9 @@
 
 #include <JDI_MIP_Display.h>
 
-// DMA SPA句柄
 #include "driver/spi_master.h"
-spi_device_handle_t dmaHAL;
-#define DMA_CHANNEL 1
-spi_host_device_t spi_host = (spi_host_device_t)DMA_CHANNEL; // 绘制一次然后冻结
+spi_device_handle_t dmaHAL; // DMA SPA句柄
+spi_host_device_t spi_host = (spi_host_device_t)1; // 绘制一次然后冻结
 
 JDI_MIP_Display::JDI_MIP_Display() : Adafruit_GFX(DISPLAY_WIDTH, DISPLAY_HEIGHT)
 {
@@ -78,6 +76,24 @@ void JDI_MIP_Display::refresh()
     }
 }
 
+void JDI_MIP_Display::refresh2()
+{
+    for (int i = 0; i < HEIGHT; i++)
+    {
+        int lineIdx = HALF_WIDTH * i;
+        char *line_cmd;
+#ifdef DIFF_LINE_UPDATE
+        if (compareBuffersLine(lineIdx) == true) continue;
+        memcpy(&_dispBuffer[lineIdx], &_backBuffer[lineIdx], HALF_WIDTH);
+        line_cmd = &_dispBuffer[lineIdx];
+#else
+        line_cmd = &_backBuffer[lineIdx];
+#endif
+        sendLineCommand(line_cmd, i);
+        //Serial.println();
+    }
+}
+
 bool JDI_MIP_Display::compareBuffersLine(int lineIndex)
 {
 #ifdef DIFF_LINE_UPDATE
@@ -98,7 +114,7 @@ void JDI_MIP_Display::clearScreen()
         uint8_t buf[2];
         buf[0] = CMD_ALL_CLEAR;
         buf[1] = 0x00;
-        pushPixelsDMA(buf, 2);
+        _pushPixelsDMA(buf, 2);
     }
     else
     {
@@ -128,12 +144,7 @@ void JDI_MIP_Display::sendLineCommand(char *line_cmd, int line)
         }
         buf[HALF_WIDTH + 2] = 0x00;
         buf[HALF_WIDTH + 3] = 0x00;
-
-        /*buf[HALF_WIDTH + 4] = 0x00;
-        buf[HALF_WIDTH + 5] = 0x00;
-        buf[HALF_WIDTH + 6] = 0x00;
-        buf[HALF_WIDTH + 7] = 0x00;*/
-        pushPixelsDMA(buf, bufNum);
+        _pushPixelsDMA(buf, bufNum);
     }
     else
     {
@@ -302,6 +313,10 @@ void JDI_MIP_Display::dmaWait(void)
 ***************************************************************************************/
 void JDI_MIP_Display::pushPixelsDMA(uint8_t *image, uint32_t len)
 {
+    _pushPixelsDMA(image, len);
+}
+void JDI_MIP_Display::_pushPixelsDMA(uint8_t *image, uint32_t len)
+{
     if ((len == 0) || (!DMA_Enabled)) return;
 
     dmaWait();
@@ -319,7 +334,7 @@ void JDI_MIP_Display::pushPixelsDMA(uint8_t *image, uint32_t len)
 
     trans.user = (void *)1;
     trans.tx_buffer = image; // 数据指针
-    trans.length = len * 8;  // 数据长度，以位为单位
+    trans.length = len * 8;  // 数据长度，以位为单位 uint8_t = 8bit uint16_t = 16bit
     trans.flags = 0;         // SPI_TRANS_USE_TXDATA标志
     trans.rx_buffer = NULL;  // 指向接收缓冲区的指针，或NULL表示无MISO阶段。如果使用DMA，则以4字节为单位写入。
 
@@ -380,7 +395,8 @@ bool JDI_MIP_Display::initDMA(int sck, int miso, int mosi, int ss, int fre)
         .pre_cb = 0, // dc_callback，//回调处理D/C行
         .post_cb = 0};
 
-    ret = spi_bus_initialize(spi_host, &buscfg, SPI_DMA_CH_AUTO); // spi总线初始化
+    // spi总线初始化 esp32c3只能auto DMA 通道
+    ret = spi_bus_initialize(spi_host, &buscfg, SPI_DMA_CH_AUTO);
     ESP_ERROR_CHECK(ret);
     // Serial.print("ret0:"); Serial.println(ret);
     ret = spi_bus_add_device(spi_host, &devcfg, &dmaHAL); // spi总线添加设备
