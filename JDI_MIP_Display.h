@@ -29,7 +29,7 @@
 #include <Adafruit_GFX.h>
 #include <Display_cfg.h>
 
-
+#define USE_ESP32_DMA  // 使用ESP32 DMA
 #define DIFF_LINE_UPDATE   // 差异行更新
 #define HALF_WIDTH (DISPLAY_WIDTH / 2)
 
@@ -54,7 +54,7 @@ class JDI_MIP_Display : public Adafruit_GFX
 {
 public:
         JDI_MIP_Display();
-        void begin(int sck = -1, int miso = -1, int mosi = -1, int ss = -1, int fre = -1, bool dmaEN = 0);
+        void begin();
         void refresh();
         void refresh2();
         void displayOn();
@@ -62,14 +62,22 @@ public:
         void clearScreen();
         void frontlightOn();
         void frontlightOff();
+        void selectSPI(SPIClass& spi, SPISettings spi_settings);
         void setBackgroundColor(uint16_t color);
         void drawBufferedPixel(int16_t x, int16_t y, uint16_t color);
         void pushPixelsDMA(uint8_t *image, uint32_t len);
 private:
+        uint8_t _sck;         // 时钟信号 Clock signal
+        uint8_t _miso;        // 主输入从输出 Master input from output
+        uint8_t _mosi;        // 主输出从输入 Master output from input
         uint8_t _scs;         // 芯片选择信号 Chip selection signal
         uint8_t _disp;        // 显示ON/OFF开关信号 Display ON/OFF switch signal
         uint8_t _frontlight;  // 前置灯 Front lights
         uint16_t _background; // 背景 background
+        uint32_t _freq;       // SPI频率 SPI frequency
+
+        SPIClass* _pSPIx;
+        SPISettings _spi_settings;
 
         char _backBuffer[(DISPLAY_WIDTH / 2) * DISPLAY_HEIGHT];
 #ifdef DIFF_LINE_UPDATE
@@ -78,7 +86,7 @@ private:
         void sendLineCommand(char *line_cmd, int line);
         void drawPixel(int16_t x, int16_t y, uint16_t color);
         bool compareBuffersLine(int lineIndex);
-
+#ifdef USE_ESP32_DMA
         // 检查DMA是否已完成-使用while（tft.dmaBusy）；等待阻塞
         // Check if DMA has been completed - use while (tft. dmaBusy); Waiting for blocking
         bool DMA_Enabled = false; // DMA启用状态的标志 Flag for DMA enabled status
@@ -88,5 +96,6 @@ private:
         void _pushPixelsDMA(uint8_t *image, uint32_t len);
         bool initDMA(int sck, int miso, int mosi, int ss, int fre);
         void deInitDMA(void);
+#endif
 };
 #endif
