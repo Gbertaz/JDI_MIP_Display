@@ -23,11 +23,15 @@
 #define DISPLAY_WIDTH   400         // Display width in pixel
 #define DISPLAY_HEIGHT  240         // Display height in pixel
 
+#define USE_ESP32_DMA  // 使用ESP32 DMA
+#define DIFF_LINE_UPDATE   // 差异行更新
+
 //=================================================================
 // Wiring details: https://github.com/Gbertaz/JDI_MIP_Display#wiring
 //=================================================================
 
-#define SPI_FREQUENCY   4000000
+#define SPI_FREQUENCY   4000000     // SPI frequency in Hz
+#define SPI_CHANNEL     spi0        // SPI channel number
 #define PIN_MISO        D9          // SPI Data Signal pin
 #define PIN_MOSI        D10         // SPI Data Signal pin
 #define PIN_SCK         D8          // SPI Clock Signal pin

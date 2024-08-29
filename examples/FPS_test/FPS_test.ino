@@ -85,7 +85,7 @@ unsigned int frames = 0;
 unsigned long startMillis = 0;
 
 // uncomment the following 2 lines if you want to use a custom SPI bus, for example spi0 on the RP2040
-// SPIClassRP2040 SPIn(/*spi_inst_t *spi*/ spi0,  /*pin_size_t rx*/ PIN_MISO, /*pin_size_t cs*/ PIN_SCS, /*pin_size_t sck*/ PIN_SCK, /*pin_size_t tx*/ PIN_MOSI);
+// SPIClassRP2040 SPIn(/*spi_inst_t *spi*/ SPI_CHANNEL,  /*pin_size_t rx*/ PIN_MISO, /*pin_size_t cs*/ PIN_SCS, /*pin_size_t sck*/ PIN_SCK, /*pin_size_t tx*/ PIN_MOSI);
 
 void setup() {
   // jdi_display.selectSPI(SPIn, SPISettings(SPI_FREQUENCY, MSBFIRST, SPI_MODE0));

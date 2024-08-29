@@ -29,8 +29,6 @@
 #include <Adafruit_GFX.h>
 #include <Display_cfg.h>
 
-#define USE_ESP32_DMA  // 使用ESP32 DMA
-#define DIFF_LINE_UPDATE   // 差异行更新
 #define HALF_WIDTH (DISPLAY_WIDTH / 2)
 
 #define COLOR_BLACK 0x00
