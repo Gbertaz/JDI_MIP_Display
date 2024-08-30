@@ -22,18 +22,30 @@
 
 #include <JDI_MIP_Display.h>
 
-#include "driver/spi_master.h"
-spi_device_handle_t dmaHAL; // DMA SPA句柄
-spi_host_device_t spi_host = (spi_host_device_t)1; // 绘制一次然后冻结
+#ifdef USE_ESP32_DMA
+    #include "driver/spi_master.h"
+    spi_device_handle_t dmaHAL; // DMA SPA句柄
+    spi_host_device_t spi_host = (spi_host_device_t)1; // 绘制一次然后冻结
+#endif
 
-JDI_MIP_Display::JDI_MIP_Display() : Adafruit_GFX(DISPLAY_WIDTH, DISPLAY_HEIGHT)
+JDI_MIP_Display::JDI_MIP_Display() : Adafruit_GFX(DISPLAY_WIDTH, DISPLAY_HEIGHT), _pSPIx(&SPI), _spi_settings(SPI_FREQUENCY, MSBFIRST, SPI_MODE0)
 {
+    _mosi = PIN_MOSI;
+    _miso = PIN_MISO;
+    _sck = PIN_SCK;
     _scs = PIN_SCS;
     _disp = PIN_DISP;
+    _freq = SPI_FREQUENCY;
     _frontlight = PIN_FRONTLIGHT;
 }
 
-void JDI_MIP_Display::begin(int sck, int miso, int mosi, int ss, int fre, bool dmaEN)
+void JDI_MIP_Display::selectSPI(SPIClass& spi, SPISettings spi_settings)
+{
+  _pSPIx = &spi;
+  _spi_settings = spi_settings;
+}
+
+void JDI_MIP_Display::begin()
 {
     _background = COLOR_BLACK;
     digitalWrite(_scs, LOW);
@@ -46,16 +58,11 @@ void JDI_MIP_Display::begin(int sck, int miso, int mosi, int ss, int fre, bool d
 #endif
 
     // 是否开启DMA Is DMA enabled
-    if (dmaEN) initDMA(sck, miso, mosi, ss, fre); 
-    else if (sck == -1 && miso == -1 && mosi == -1 && ss == -1 && fre == -1)
-    {
-        SPI.begin();
-    }
-    else
-    {
-        SPI.setFrequency(fre);
-        SPI.begin(sck, miso, mosi, ss);
-    }
+#ifdef USE_ESP32_DMA
+    initDMA(_sck, _miso, _mosi, _scs, _freq); 
+#else
+    _pSPIx->begin();
+#endif
 }
 
 void JDI_MIP_Display::refresh()
@@ -72,7 +79,6 @@ void JDI_MIP_Display::refresh()
         line_cmd = &_backBuffer[lineIdx];
 #endif
         sendLineCommand(line_cmd, i);
-        //Serial.println();
     }
 }
 
@@ -92,6 +98,7 @@ bool JDI_MIP_Display::compareBuffersLine(int lineIndex)
 
 void JDI_MIP_Display::clearScreen()
 {
+#ifdef USE_ESP32_DMA
     if (DMA_Enabled)
     {
         uint8_t buf[2];
@@ -101,11 +108,16 @@ void JDI_MIP_Display::clearScreen()
     }
     else
     {
+#endif
+        _pSPIx->beginTransaction(_spi_settings);
         digitalWrite(_scs, HIGH);
-        SPI.transfer(CMD_ALL_CLEAR);
-        SPI.transfer(0x00);
+        _pSPIx->transfer(CMD_ALL_CLEAR);
+        _pSPIx->transfer(0x00);
         digitalWrite(_scs, LOW);
+        _pSPIx->endTransaction();
+#ifdef USE_ESP32_DMA
     }
+#endif
 }
 
 void JDI_MIP_Display::sendLineCommand(char *line_cmd, int line)
@@ -114,7 +126,7 @@ void JDI_MIP_Display::sendLineCommand(char *line_cmd, int line)
     {
         return;
     }
-
+#ifdef USE_ESP32_DMA
     if (DMA_Enabled)
     {
         uint8_t bufNum = HALF_WIDTH + 4;
@@ -131,18 +143,23 @@ void JDI_MIP_Display::sendLineCommand(char *line_cmd, int line)
     }
     else
     {
+#endif
+        _pSPIx->beginTransaction(_spi_settings);
         digitalWrite(_scs, HIGH);
-        SPI.transfer(CMD_UPDATE);
-        SPI.transfer(line + 1);
-        for (int i = 0; i < HALF_WIDTH; i++)
-        {
-            SPI.transfer(line_cmd[i]);
-            // Serial.print(line_cmd[i],HEX); Serial.print(" ");
+        _pSPIx->transfer(CMD_UPDATE);
+        _pSPIx->transfer(line + 1);
+
+        for(int i = 0; i < HALF_WIDTH; i++){
+            _pSPIx->transfer(line_cmd[i]);
         }
-        SPI.transfer(0x00);
-        SPI.transfer(0x00);
+
+        _pSPIx->transfer(0x00);
+        _pSPIx->transfer(0x00);
         digitalWrite(_scs, LOW);
+        _pSPIx->endTransaction();
+#ifdef USE_ESP32_DMA
     }
+#endif
 }
 
 void JDI_MIP_Display::drawBufferedPixel(int16_t x, int16_t y, uint16_t color)
@@ -192,7 +209,7 @@ void JDI_MIP_Display::frontlightOff()
 {
     digitalWrite(_frontlight, LOW);
 }
-
+#ifdef USE_ESP32_DMA
 /***************************************************************************************
 ** 函数名称：dmaBusy            Function name: dmaBusy
 ** 描述：检查DMA是否繁忙         Description: Check if DMA is busy
@@ -344,3 +361,4 @@ void JDI_MIP_Display::deInitDMA(void)
   spi_bus_free(spi_host);        // spi总线自由
   DMA_Enabled = false;
 }
+#endif

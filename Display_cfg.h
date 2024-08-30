@@ -23,28 +23,18 @@
 #define DISPLAY_WIDTH   400         // Display width in pixel
 #define DISPLAY_HEIGHT  240         // Display height in pixel
 
+#define USE_ESP32_DMA  // 使用ESP32 DMA
+#define DIFF_LINE_UPDATE   // 差异行更新
+
 //=================================================================
 // Wiring details: https://github.com/Gbertaz/JDI_MIP_Display#wiring
 //=================================================================
 
-//===============================
-// Wiring example Teensy 4.1
-#define PIN_SCS         10          // SPI Chip Select Signal pin
-#define PIN_DISP        22          // Display ON/OFF Switching Signal pin
-#define PIN_FRONTLIGHT  23          // Frontlight pin. Optional depending on the display model
-
-//===============================
-// Wiring example Esp8266 Wemos D1 mini
-/*
-#define PIN_SCS         15         // D8 GPIO15 SPI Chip Select Signal pin
-#define PIN_DISP        4          // D2 GPIO4  Display ON/OFF Switching Signal pin
-#define PIN_FRONTLIGHT  5          // D1 GPIO5  Frontlight pin. Optional depending on the display model
-*/
-
-//===============================
-// Wiring example Esp32 NodeMCU
-/*
-#define PIN_SCS         5          // GPIO5     SPI Chip Select Signal pin
-#define PIN_DISP        21         // GPIO21    Display ON/OFF Switching Signal pin
-#define PIN_FRONTLIGHT  22         // GPIO22    Frontlight pin. Optional depending on the display model
-*/
+#define SPI_FREQUENCY   4000000     // SPI frequency in Hz
+#define SPI_CHANNEL     spi0        // SPI channel number
+#define PIN_MISO        D9          // SPI Data Signal pin
+#define PIN_MOSI        D10         // SPI Data Signal pin
+#define PIN_SCK         D8          // SPI Clock Signal pin
+#define PIN_SCS         D7          // SPI Chip Select Signal pin
+#define PIN_DISP        D0          // Display ON/OFF Switching Signal pin
+#define PIN_FRONTLIGHT  -1          // Frontlight pin. Optional depending on the display model
