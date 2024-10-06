@@ -51,7 +51,7 @@
 class JDI_MIP_Display : public Adafruit_GFX
 {
 public:
-        JDI_MIP_Display();
+        JDI_MIP_Display(uint8_t rot = 1);
         void begin();
         void refresh();
         void refresh2();
@@ -64,6 +64,7 @@ public:
         void setBackgroundColor(uint16_t color);
         void drawBufferedPixel(int16_t x, int16_t y, uint16_t color);
         void pushPixelsDMA(uint8_t *image, uint32_t len);
+        void set_direction(uint16_t n);
 private:
         uint8_t _sck;         // 时钟信号 Clock signal
         uint8_t _miso;        // 主输入从输出 Master input from output
@@ -73,6 +74,7 @@ private:
         uint8_t _frontlight;  // 前置灯 Front lights
         uint16_t _background; // 背景 background
         uint32_t _freq;       // SPI频率 SPI frequency
+        uint16_t _rotation;    // 屏幕旋转方向 0 90 180 270
 
         SPIClass* _pSPIx;
         SPISettings _spi_settings;
