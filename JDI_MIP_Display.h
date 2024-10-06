@@ -46,7 +46,7 @@
 #define CMD_BLINKING_WHITE 0x18
 #define CMD_ALL_CLEAR 0x20
 #define CMD_VCOM 0x40
-#define CMD_UPDATE 0x90
+#define CMD_UPDATE 0x80
 
 class JDI_MIP_Display : public Adafruit_GFX
 {
