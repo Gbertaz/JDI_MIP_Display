@@ -65,21 +65,43 @@ void JDI_MIP_Display::begin()
 #endif
 }
 
-void JDI_MIP_Display::refresh()
-{
-    for (int i = 0; i < HEIGHT; i++)
-    {
-        int lineIdx = HALF_WIDTH * i;
-        char *line_cmd;
-#ifdef DIFF_LINE_UPDATE
-        if (compareBuffersLine(lineIdx) == true) continue;
-        memcpy(&_dispBuffer[lineIdx], &_backBuffer[lineIdx], HALF_WIDTH);
-        line_cmd = &_dispBuffer[lineIdx];
-#else
-        line_cmd = &_backBuffer[lineIdx];
-#endif
-        sendLineCommand(line_cmd, i);
-    }
+/*
+         0  1  2  3  4 ......70 71 72 73 
+        74 75 76 77 78.................
+
+        分为三类：
+            0 1 3 4 6 7 8 9 ...  这些像素适用于   (3 * x)/8 = A ... B      对应 BUF[A]第B位  +  BUF[A]第B+1位  +  BUF[A]第B+2位 组成RGB
+            2 10 18 26 ...       这些像素满足((x - 2) % 8) == 0)   对应 BUF[A]后两个位  +  BUF[A+1]前一个位  组成RGB
+            5 13 21 29 ...       这些像素满足((x - 5) % 8) == 0)   对应 BUF[A]后一个位  +  BUF[A+1]前两个位  组成RGB
+
+*/
+
+void JDI_Display::drawPixel(int16_t x, int16_t y, uint16_t color) {
+  if (x < 0 || x >= DISPLAY_WIDTH || y < 0 || y >= DISPLAY_HEIGHT) {
+    return;
+  }
+  int dy = 27 * y; //一行74像素，一个像素3bit,一共27Byte  74*3/8 = 27
+
+  int A = (x * 3) / 8;
+  int B = (x * 3) % 8;
+
+  if ((x > 1) && (((x - 2) % 8) == 0)) {                // 2 10 18 26 ...
+    _backBuffer[A + dy] &= ~(0x03);      //0000 0011  清后两位
+    _backBuffer[A + 1 + dy] &= ~(0x80);  //1000 0000  清前一位
+
+    _backBuffer[A + dy] |= color >> 1;      //0000 0011
+    _backBuffer[A + 1 + dy] |= color << 7;  //1000 0000
+
+  } else if ((x > 1) && (((x - 5) % 8) == 0)) {         // 5 13 21 29 ...
+    _backBuffer[A + dy] &= ~(0x01);      //0000 0001  清后一位
+    _backBuffer[A + 1 + dy] &= ~(0xc0);  //1100 0000  清前两位
+
+    _backBuffer[A + dy] |= color >> 2;      //0000 0001
+    _backBuffer[A + 1 + dy] |= color << 6;  //1100 0000
+  } else {                                              // 0 1 3 4 6 7 8 9 ...
+    _backBuffer[A + dy] &= ~(0xc0 >> B);
+    _backBuffer[A + dy] |= color << (5 - B);
+  }
 }
 
 
