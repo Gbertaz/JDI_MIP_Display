@@ -51,7 +51,7 @@
 class JDI_MIP_Display : public Adafruit_GFX
 {
 public:
-        JDI_MIP_Display(uint8_t rot = 1);
+        JDI_MIP_Display(uint16_t rot = 1);
         void begin();
         void refresh();
         void refresh2();
