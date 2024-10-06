@@ -28,7 +28,7 @@
     spi_host_device_t spi_host = (spi_host_device_t)1; // 绘制一次然后冻结
 #endif
 
-JDI_MIP_Display::JDI_MIP_Display() : Adafruit_GFX(DISPLAY_WIDTH, DISPLAY_HEIGHT), _pSPIx(&SPI), _spi_settings(SPI_FREQUENCY, MSBFIRST, SPI_MODE0)
+JDI_MIP_Display::JDI_MIP_Display(uint16_t rot) : Adafruit_GFX(DISPLAY_WIDTH, DISPLAY_HEIGHT), _pSPIx(&SPI), _spi_settings(SPI_FREQUENCY, MSBFIRST, SPI_MODE0)
 {
     _mosi = PIN_MOSI;
     _miso = PIN_MISO;
@@ -37,12 +37,23 @@ JDI_MIP_Display::JDI_MIP_Display() : Adafruit_GFX(DISPLAY_WIDTH, DISPLAY_HEIGHT)
     _disp = PIN_DISP;
     _freq = SPI_FREQUENCY;
     _frontlight = PIN_FRONTLIGHT;
+    set_direction(rot);
 }
 
 void JDI_MIP_Display::selectSPI(SPIClass& spi, SPISettings spi_settings)
 {
   _pSPIx = &spi;
   _spi_settings = spi_settings;
+}
+
+
+void JDI_MIP_Display::set_direction(uint16_t rot){
+	_rotation = rot;
+	if((rot == 0) || (rot == 180)){
+		setRotation(1); //等效 setRotation(3);
+	}else{
+		setRotation(0); //等效 setRotation(2);
+	}
 }
 
 void JDI_MIP_Display::begin()
@@ -65,9 +76,117 @@ void JDI_MIP_Display::begin()
 #endif
 }
 
+#ifdef USE_144_72_LCD
+void JDI_MIP_Display::refresh() {
+    char buf = 0;
+    switch (_rotation) {
+    case 270: // 遍历所有行
+        for (int i = 0; i < 144; i++) {
+            // 片选拉高，准备通信
+            digitalWrite(_scs, HIGH);
+            _pSPIx->transfer(CMD_UPDATE);
+            _pSPIx->transfer(i + 1);
+
+            // 处理行数据
+            for (int a = 70; a >= 0; a -= 2) {
+                if (i % 2 == 0) {
+                    // 偶数行：提取高 4 位并合并
+                    buf = ((_backBuffer[(a + 1) * 72 + i / 2] & 0xF0)) |
+                          ((_backBuffer[(a + 0) * 72 + i / 2] & 0xF0) >> 4);
+                } else {
+                    // 奇数行：提取低 4 位并合并
+                    buf = ((_backBuffer[(a + 1) * 72 + i / 2] & 0x0F) << 4) |
+                          (_backBuffer[(a + 0) * 72 + i / 2] & 0x0F);
+                }
+
+                // 通过 SPI 发送数据
+                _pSPIx->transfer(buf);
+            }
+            // 结束数据传输，发送两个 0x00 字节
+            _pSPIx->transfer(0x00);
+            _pSPIx->transfer(0x00);
+
+            // 片选拉低，结束通信
+            digitalWrite(_scs, LOW);
+        }
+        break;
+    case 90:
+        for (int i = 0; i < 144; i++) {
+            // 片选拉高，准备通信
+            digitalWrite(_scs, HIGH);
+            _pSPIx->transfer(CMD_UPDATE);
+            _pSPIx->transfer(i + 1);
+
+            // 处理行数据
+            for (int a = 0; a < 72; a += 2) {
+                if ((143 - i) % 2 == 0) {
+                    // 偶数行：提取高 4 位并合并
+                    buf = ((_backBuffer[(a + 0) * 72 + (143 - i) / 2] & 0xF0)) |
+                          ((_backBuffer[(a + 1) * 72 + (143 - i) / 2] & 0xF0) >>
+                           4);
+
+                } else {
+                    // 奇数行：提取低 4 位并合并
+                    buf = ((_backBuffer[(a + 0) * 72 + (143 - i) / 2] & 0x0F)
+                           << 4) |
+                          (_backBuffer[(a + 1) * 72 + (143 - i) / 2] & 0x0F);
+                }
+
+                // 通过 SPI 发送数据
+                _pSPIx->transfer(buf);
+            }
+            // 结束数据传输，发送两个 0x00 字节
+            _pSPIx->transfer(0x00);
+            _pSPIx->transfer(0x00);
+
+            // 片选拉低，结束通信
+            digitalWrite(_scs, LOW);
+        }
+        break;
+    case 180:
+		for (int i = 0; i < 144; i++)
+		{
+			int lineIdx = 36 * (143 - i);
+			char *line_cmd;
+            _pSPIx->beginTransaction(_spi_settings);
+            digitalWrite(_scs, HIGH);
+            _pSPIx->transfer(CMD_UPDATE);
+            _pSPIx->transfer(i + 1);
+
+            for(int a = 0; a < 36; a++){
+
+                //交换高四位和低四位，因为反过来读的
+                buf = _backBuffer[lineIdx + 35 - a];
+                buf = ((buf & 0xF0) >> 4) | ((buf & 0x0F) << 4);
+
+                _pSPIx->transfer(buf);
+            }
+
+            _pSPIx->transfer(0x00);
+            _pSPIx->transfer(0x00);
+            digitalWrite(_scs, LOW);
+            _pSPIx->endTransaction();
+		}
+	break;
+    case 0:
+		for (int i = 0; i < height(); i++)
+		{
+			int lineIdx = width()/2 * i;
+			char *line_cmd;
+			line_cmd = &_backBuffer[lineIdx];
+			sendLineCommand(line_cmd, i);
+		}
+    break;
+    default:
+        break;
+    }
+}
+
+#else
+
 void JDI_MIP_Display::refresh()
 {
-    for (int i = 0; i < HEIGHT; i++)
+    for (int i = 0; i < height(); i++)
     {
         int lineIdx = HALF_WIDTH * i;
         char *line_cmd;
@@ -81,7 +200,7 @@ void JDI_MIP_Display::refresh()
         sendLineCommand(line_cmd, i);
     }
 }
-
+#endif
 
 bool JDI_MIP_Display::compareBuffersLine(int lineIndex)
 {
@@ -122,7 +241,7 @@ void JDI_MIP_Display::clearScreen()
 
 void JDI_MIP_Display::sendLineCommand(char *line_cmd, int line)
 {
-    if ((line < 0) || (line >= HEIGHT))
+    if ((line < 0) || (line >= height()))
     {
         return;
     }
@@ -149,7 +268,7 @@ void JDI_MIP_Display::sendLineCommand(char *line_cmd, int line)
         _pSPIx->transfer(CMD_UPDATE);
         _pSPIx->transfer(line + 1);
 
-        for(int i = 0; i < HALF_WIDTH; i++){
+        for(int i = 0; i < width()/2; i++){
             _pSPIx->transfer(line_cmd[i]);
         }
 
